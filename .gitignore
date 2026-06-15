@@ -1,2 +1,7 @@
 AFS x Reboot Tech Challenge.pdf
 .env
+.claude/
+node_modules/
+dist/
+*.log
+backend/server

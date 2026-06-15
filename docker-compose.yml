@@ -3,9 +3,9 @@ services:
     image: postgres:16
     container_name: todo_postgres
     environment:
-      POSTGRES_DB: todo_app
-      POSTGRES_USER: todo_user
-      POSTGRES_PASSWORD: todo_password
+      POSTGRES_DB: ${POSTGRES_DB:-todo_app}
+      POSTGRES_USER: ${POSTGRES_USER:-todo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todo_password}
     ports:
       - "5433:5432"
     volumes:
@@ -18,9 +18,9 @@ services:
     container_name: todo_backend
     environment:
       PORT: 5000
-      DATABASE_URL: postgres://todo_user:todo_password@postgres:5432/todo_app
-      JWT_SECRET: change_this_secret_before_submission
-      FRONTEND_ORIGIN: http://localhost:3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-todo_user}:${POSTGRES_PASSWORD:-todo_password}@postgres:5432/${POSTGRES_DB:-todo_app}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
     ports:
       - "5000:5000"
     depends_on:
@@ -31,7 +31,7 @@ services:
       context: ./frontend
     container_name: todo_frontend
     environment:
-      VITE_API_URL: http://localhost:5000
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
     ports:
       - "3000:3000"
     depends_on:
