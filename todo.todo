@@ -1,0 +1,385 @@
+# ToDo App Build Plan
+
+Goal:
+Build a modular ToDo app with auth for the AFS x Reboot Tech Challenge.
+
+Stack:
+- Frontend: React + Vite
+- Backend: Go
+- Database: PostgreSQL official Docker image
+- Auth: username/password, bcrypt, JWT
+- API: REST
+- Deployment: Docker Compose
+
+Must deliver:
+- Register and login
+- JWT-protected ToDo CRUD
+- User-specific ToDos
+- Separate frontend, backend, and database containers
+- README with setup, architecture, auth, and database notes
+
+
+============================================================
+1. File Structure
+============================================================
+
+ToDo-application/
+  README.md
+  docker-compose.yml
+  .env.example
+  .gitignore
+
+  frontend/
+    Dockerfile
+    package.json
+    index.html
+    vite.config.js
+    src/
+      main.jsx
+      App.jsx
+      api.js
+      styles.css
+      components/
+        AuthForm.jsx
+        TodoForm.jsx
+        TodoList.jsx
+        TodoItem.jsx
+
+  backend/
+    Dockerfile
+    go.mod
+    go.sum
+    main.go
+    src/
+      config/config.go
+      db/db.go
+      auth/password.go
+      auth/jwt.go
+      middleware/auth.go
+      handlers/health.go
+      handlers/auth.go
+      handlers/todos.go
+      models/user.go
+      models/todo.go
+
+  db/
+    init/
+      001_schema.sql
+
+Backend structure note:
+- Keep main.go directly under backend/ for a small submission.
+- Keep backend app packages under backend/src/ to mirror frontend/src/.
+- Skip cmd/ and internal/ unless the backend grows larger.
+
+
+============================================================
+2. Environment
+============================================================
+
+.env.example should include:
+- POSTGRES_DB=todo_app
+- POSTGRES_USER=todo_user
+- POSTGRES_PASSWORD=todo_password
+- DATABASE_URL=postgres://todo_user:todo_password@postgres:5432/todo_app
+- JWT_SECRET=replace_with_long_random_secret
+- FRONTEND_ORIGIN=http://localhost:3000
+- VITE_API_URL=http://localhost:5000
+
+
+============================================================
+3. Database Schema
+============================================================
+
+users:
+- id SERIAL PRIMARY KEY
+- username VARCHAR(100) UNIQUE NOT NULL
+- password_hash TEXT NOT NULL
+- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+todos:
+- id SERIAL PRIMARY KEY
+- user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+- title VARCHAR(255) NOT NULL
+- completed BOOLEAN NOT NULL DEFAULT FALSE
+- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+Rules:
+- Never store plain text passwords.
+- Never return password_hash.
+- Every todo belongs to one user.
+- Every todo query filters by user_id.
+
+Final SQL:
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE todos (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  completed BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+============================================================
+4. API Contract
+============================================================
+
+Public:
+- GET /health
+- POST /auth/register
+- POST /auth/login
+
+Protected:
+- GET /auth/me
+- GET /todos
+- POST /todos
+- PUT /todos/:id
+- DELETE /todos/:id
+
+Register/login body:
+{
+  "username": "mahmood",
+  "password": "password123"
+}
+
+Register/login response:
+{
+  "token": "...",
+  "user": { "id": 1, "username": "mahmood" }
+}
+
+Protected request header:
+Authorization: Bearer TOKEN
+
+Create todo body:
+{
+  "title": "Finish project"
+}
+
+Update todo body:
+{
+  "title": "Finish project",
+  "completed": true
+}
+
+
+============================================================
+5. Docker Notes
+============================================================
+
+- postgres uses image postgres:16.
+- Do not create a custom PostgreSQL Dockerfile.
+- Mount ./db/init for first-run schema setup.
+- Backend runs on port 5000.
+- Frontend runs on port 3000.
+- Backend DATABASE_URL uses host postgres, not localhost.
+- Use docker compose down -v only to reset the database.
+- Key commands: docker compose config, docker compose up --build, docker compose down.
+
+
+============================================================
+6. Build Plan
+============================================================
+
+Phase 1: Skeleton and Docker, 1.5 hours
+- Create folders.
+- Add docker-compose.yml.
+- Add db/init/001_schema.sql.
+- Add backend and frontend Dockerfiles.
+- Add .env.example and .gitignore.
+- Run docker compose config.
+
+Phase 2: Go Backend Base, 1.5 hours
+- Run go mod init todo-backend.
+- Add dependencies:
+  - github.com/jackc/pgx/v5/pgxpool
+  - golang.org/x/crypto/bcrypt
+  - github.com/golang-jwt/jwt/v5
+- Optional router: github.com/gin-gonic/gin
+- Build main.go.
+- Connect PostgreSQL.
+- Add CORS for http://localhost:3000.
+- Add GET /health.
+
+Phase 3: Auth Backend, 2 hours
+- Implement bcrypt helpers.
+- Implement JWT helpers.
+- POST /auth/register:
+  - validate username/password
+  - hash password
+  - insert user
+  - return token + safe user
+- POST /auth/login:
+  - find user
+  - compare password
+  - return token + safe user
+- GET /auth/me:
+  - validate JWT
+  - return current user
+
+Phase 4: Todo Backend, 2 hours
+- Implement JWT middleware.
+- Protect all /todos routes.
+- GET /todos: current user's todos only.
+- POST /todos: create for current user.
+- PUT /todos/:id: update current user's todo only.
+- DELETE /todos/:id: delete current user's todo only.
+- Return 404 for missing or unauthorized todo.
+
+Phase 5: Frontend Base, 1 hour
+- Create React/Vite app.
+- Build api.js helper.
+- Store token in localStorage.
+- Load token on refresh.
+- Call /auth/me if token exists.
+- Keep App.jsx simple.
+
+Phase 6: Frontend Auth, 1.5 hours
+- Create AuthForm.jsx.
+- Toggle login/register mode.
+- Fields: username, password.
+- Submit to /auth/register or /auth/login.
+- Save token and user on success.
+- Show clear error on failure.
+- Add logout.
+
+Phase 7: Frontend Todos, 2 hours
+- Create TodoForm.jsx.
+- Create TodoList.jsx.
+- Create TodoItem.jsx.
+- Implement fetch/create/update/delete.
+- Add completed checkbox.
+- Use prompt() for editing if time is tight.
+
+Phase 8: Full Docker Test, 1 hour
+- Run docker compose up --build.
+- Open http://localhost:3000.
+- Check http://localhost:5000/health.
+- Register, create, complete, edit, delete.
+- Refresh and confirm data persists.
+- Logout and login again.
+
+Phase 9: README, 1 hour
+- Overview
+- Tech stack
+- Architecture
+- Auth approach
+- Database schema
+- Run command
+- URLs
+- API endpoints
+
+
+============================================================
+7. Security Checklist
+============================================================
+
+- Passwords hashed with bcrypt.
+- JWT secret from environment.
+- password_hash never returned.
+- Todo routes require Authorization: Bearer TOKEN.
+- Every todo query filters by user_id.
+- Invalid login returns generic error.
+- Duplicate username returns clean error.
+- .env is not committed.
+- .env.example uses fake values.
+
+
+============================================================
+8. If Time Gets Tight
+============================================================
+
+Must keep:
+- Docker Compose
+- PostgreSQL official image
+- Go backend
+- Register/login
+- JWT route protection
+- Todo CRUD
+- Frontend auth UI
+- Frontend todo UI
+- README
+
+Can simplify:
+- Basic CSS
+- One App.jsx
+- prompt() for editing
+- No email field
+- No refresh tokens
+- No password reset
+- No tests
+- No advanced migrations
+
+
+============================================================
+9. Final Manual Test
+============================================================
+
+1. docker compose down -v
+2. docker compose up --build
+3. Open http://localhost:3000
+4. Register a user.
+5. Create two todos.
+6. Complete one todo.
+7. Edit one todo.
+8. Delete one todo.
+9. Refresh browser.
+10. Confirm remaining todo exists.
+11. Logout.
+12. Login again.
+13. Confirm user-specific data loads.
+14. docker compose down
+
+If all steps pass, submit the repository.
+
+
+============================================================
+10. Before Frontend Work
+============================================================
+
+Do these before starting the frontend if time allows. They are small backend
+polish items that make the API/schema cleaner before the UI depends on it.
+
+- DONE: Add updated_at to todos:
+  - schema: updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  - update query: SET updated_at = CURRENT_TIMESTAMP
+  - response model: UpdatedAt time.Time `json:"updated_at"`
+  - tests: assert update response includes updated_at
+- DONE: Add CREATE INDEX idx_todos_user_id ON todos(user_id).
+- DONE: Replace duplicate-key string matching with pgconn.PgError code 23505.
+- Change backend Dockerfile from go run . to go build + CMD ./server.
+- DONE: Remove real JWT secret fallback from main.go.
+
+Frontend impact:
+- updated_at adds a new response field, but the frontend can ignore it.
+- DB index, Dockerfile, JWT fallback, and duplicate-key handling do not change
+  the frontend API contract.
+
+
+============================================================
+11. Future Improvements
+============================================================
+
+These can be done after the frontend if time allows. They should not affect
+frontend work as long as API routes and response shapes stay the same.
+
+Backend polish:
+- Align go.mod Go version with the actual installed/stable Go version.
+- Convert UserFromRequest helper into real auth middleware.
+- Consider renaming backend/src to backend/internal for idiomatic Go.
+- Add errorJSON helper to reduce repeated error response code.
+- Consider moving SQL queries into a store/repository layer if handlers grow.
+
+Frontend impact:
+- Dockerfile, Go version, DB index, duplicate-key handling, and error helper
+  should not affect the frontend.
+- Real auth middleware should not affect the frontend if endpoints still require
+  Authorization: Bearer TOKEN and return the same JSON.
+- Repository/store refactor should not affect the frontend if response shapes
+  stay unchanged.
