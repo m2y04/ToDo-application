@@ -10,13 +10,9 @@ export default function TodoList({ todos, onDelete, onToggle, onUpdateTitle }) {
     );
   }
 
-  const sortedTodos = [...todos].sort((first, second) => {
-    if (first.completed !== second.completed) {
-      return first.completed ? 1 : -1;
-    }
-
-    return new Date(second.created_at) - new Date(first.created_at);
-  });
+  const sortedTodos = [...todos].sort(
+    (first, second) => new Date(second.created_at) - new Date(first.created_at)
+  );
 
   return (
     <ul className="todo-list">
