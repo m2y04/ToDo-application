@@ -1,0 +1,397 @@
+/* ============================================================
+   styles3.css — Light Theme (Warm Amber / Clay, Bold Green & Red)
+   ============================================================ */
+
+:root {
+  color: #2a1f0e;
+  background: #d9c9a8;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: #d9c9a8;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(960px, calc(100vw - 32px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.app-shell--centered {
+  display: grid;
+  place-items: center;
+}
+
+.panel {
+  width: 100%;
+  border: 1px solid #b8a07a;
+  border-radius: 10px;
+  background: #ede0c4;
+  box-shadow: 0 12px 40px rgb(42 31 14 / 18%);
+}
+
+.auth-panel {
+  max-width: 460px;
+  padding: 28px;
+}
+
+.auth-header,
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.topbar {
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #7a5c1e;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: #2a1f0e;
+  font-size: 1.65rem;
+  line-height: 1.15;
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 170px;
+  padding: 3px;
+  border: 1px solid #b8a07a;
+  border-radius: 8px;
+  background: #c8b48a;
+}
+
+.segmented-control button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  color: #5c4418;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.15s, background 0.15s;
+}
+
+.segmented-control button.active {
+  color: #2a1f0e;
+  background: #ede0c4;
+  box-shadow: 0 1px 4px rgb(42 31 14 / 18%);
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: #3d2e10;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  min-height: 44px;
+  border: 1.5px solid #b8a07a;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #2a1f0e;
+  background: #f7f0e0;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input::placeholder {
+  color: #a08c66;
+}
+
+input:focus {
+  border-color: #2e7d46;
+  box-shadow: 0 0 0 3px rgb(46 125 70 / 18%);
+  background: #fffcf5;
+}
+
+/* Primary — bold green */
+.button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 16px;
+  color: #ffffff;
+  background: #2e7d46;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 6px rgb(46 125 70 / 30%);
+}
+
+.button:hover:not(:disabled) {
+  background: #226035;
+  box-shadow: 0 3px 10px rgb(46 125 70 / 40%);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Neutral secondary — warm tan */
+.button--secondary {
+  border: 1.5px solid #b8a07a;
+  color: #3d2e10;
+  background: #d9c9a8;
+  box-shadow: none;
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: #c8b48a;
+  box-shadow: none;
+}
+
+/* Ghost */
+.button--ghost {
+  border: 1.5px solid #b8a07a;
+  color: #5c4418;
+  background: transparent;
+  box-shadow: none;
+}
+
+.button--ghost:hover:not(:disabled) {
+  background: #c8b48a;
+  box-shadow: none;
+}
+
+/* Danger — bold red */
+.button--danger {
+  color: #ffffff;
+  background: #c0392b;
+  box-shadow: 0 2px 6px rgb(192 57 43 / 35%);
+}
+
+.button--danger:hover:not(:disabled) {
+  background: #992d22;
+  box-shadow: 0 3px 10px rgb(192 57 43 / 45%);
+}
+
+.button--small {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.88rem;
+}
+
+.error-text,
+.status-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.error-text {
+  color: #b02a1c;
+  font-weight: 700;
+}
+
+.status-text {
+  padding: 22px;
+  color: #7a6035;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px 24px 0;
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  color: #2a1f0e;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.todo-count {
+  min-width: 88px;
+  margin: 0;
+  border: 1.5px solid #b8a07a;
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: #5c4418;
+  background: #c8b48a;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.todo-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 20px 24px;
+  border-bottom: 1.5px solid #c8b48a;
+}
+
+.dashboard-error {
+  padding: 0 24px 16px;
+}
+
+.todo-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 74px;
+  padding: 14px 24px;
+  border-top: 1.5px solid #c8b48a;
+  transition: background 0.12s;
+}
+
+.todo-item:hover {
+  background: #e4d4b0;
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  accent-color: #2e7d46;
+  cursor: pointer;
+}
+
+.todo-content {
+  min-width: 0;
+}
+
+.todo-title {
+  margin: 0;
+  color: #2a1f0e;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.todo-item--completed .todo-title {
+  color: #9a8660;
+  text-decoration: line-through;
+}
+
+.todo-meta {
+  margin: 4px 0 0;
+  color: #9a8660;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.empty-state {
+  padding: 42px 24px;
+  text-align: center;
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+  color: #3d2e10;
+  font-size: 1.2rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #7a6035;
+}
+
+@media (max-width: 560px) {
+  .app-shell {
+    width: min(100vw - 20px, 960px);
+    padding: 16px 0;
+  }
+
+  .auth-panel {
+    padding: 20px;
+  }
+
+  .auth-header,
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .segmented-control {
+    width: 100%;
+  }
+
+  .dashboard-header,
+  .todo-item {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+  }
+
+  .todo-form,
+  .edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .row-actions {
+    justify-content: stretch;
+  }
+
+  .row-actions .button {
+    flex: 1;
+  }
+}

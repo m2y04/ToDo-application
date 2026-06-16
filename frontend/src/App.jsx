@@ -145,11 +145,6 @@ export default function App() {
   }
 
   async function handleDeleteTodo(todo) {
-    const confirmed = window.confirm(`Delete "${todo.title}"?`);
-    if (!confirmed) {
-      return;
-    }
-
     setError("");
 
     try {
