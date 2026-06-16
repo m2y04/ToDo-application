@@ -29,7 +29,7 @@ type application struct {
 func main() {
 	cfg := config{
 		port:           getEnv("PORT", "5000"),
-		databaseURL:    getEnv("DATABASE_URL", "postgres://todo_user:todo_password@localhost:5433/todo_app"),
+		databaseURL:    getEnv("DATABASE_URL", "DATABASE_URL=postgres://da_user:Kc9E6ds8@localhost:5433/da_db"),
 		frontendOrigin: getEnv("FRONTEND_ORIGIN", "http://localhost:3000"),
 		jwtSecret:      os.Getenv("JWT_SECRET"),
 	}
